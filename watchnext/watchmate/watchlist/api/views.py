@@ -3,7 +3,7 @@ from rest_framework.response import Response
 # from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from watchlist.models import WatchList, StreamPlatform
-from watchlist.api.serializers import WatchListSerializer
+from watchlist.api.serializers import WatchListSerializer, StreamPlatformSerializer
 from .serializers import StreamPlatformSerializer, WatchListSerializer
 
 class StreamPlatformAV(APIView):
@@ -20,6 +20,28 @@ class StreamPlatformAV(APIView):
         else:
             return Response(serializer.errors)
 
+class StreamPlatformDetailAV(APIView):
+    
+    def get(self, request, pk):
+       try:
+           platform = StreamPlatform.objects.get(pk=pk)
+       except StreamPlatform.DoesNotExist:
+           return Response({'error': 'Not found'}, status=status.HTTP_404_NOT_FOUND) 
+       serializer = StreamPlatformSerializer(platform)
+       return Response(serializer.data)
+   
+    def put(self, request, pk):
+       platform = StreamPlatform.objects.get(pk=pk)
+       serializer = StreamPlatformSerializer(platform, data=request.data)
+       if serializer.is_valid():
+           serializer.save()
+           return Response(serializer.data)
+       
+    def delete(self, request, pk):
+        platform = StreamPlatform.objects.get(pk=pk)
+        platform.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+           
 
 class WatchListAV(APIView):
     def get(self, request):

@@ -13,6 +13,7 @@ class WatchListSerializer(serializers.ModelSerializer):
     class Meta:
        model = WatchList
        fields = "__all__" 
+
         
         #for individual representation
         # fields = ['id', 'name', 'description']
