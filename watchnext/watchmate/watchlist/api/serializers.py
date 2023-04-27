@@ -1,38 +1,90 @@
 from rest_framework import serializers
-from watchlist.models import Movie
+from watchlist.models import WatchList, StreamPlatform
 
-
-#model serializer
-
-class MovieSerializer(serializers.ModelSerializer):
-    len_name = serializers.SerializerMethodField()
+class StreamPlatformSerializer(serializers.ModelSerializer):
     
-
     class Meta:
-        model = Movie
+        model = StreamPlatform
+        fields = "__all__"
+
+
+class WatchListSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+       model = WatchList
+       fields = "__all__" 
         
         #for individual representation
         # fields = ['id', 'name', 'description']
         # exclude = ['active'] #exclude active and shows other things
         # exclude = ['name'] #exclude name and shows other
-        fields = "__all__" #its represent all the element
+        # fields = "__all__" #its represent all the element
         
-    def get_len_name(self,object):
-            length = len(object.name)
-            return length
+   
+    
+    # class MovieSerializer(serializers.ModelSerializer):
+    # len_name = serializers.SerializerMethodField()
+    
+
+    # class Meta:
+    #     model = Movie
+        
+    #     #for individual representation
+    #     # fields = ['id', 'name', 'description']
+    #     # exclude = ['active'] #exclude active and shows other things
+    #     # exclude = ['name'] #exclude name and shows other
+    #     fields = "__all__" #its represent all the element
+        
+    # def get_len_name(self,object):
+    #         length = len(object.name)
+    #         return length
         
     
-    def validate(self, data):
-        if data['name']== data['description']:
-            raise serializers.ValidationError("Title and description should be different")
-        else:
-            return data
+    # def validate(self, data):
+    #     if data['name']== data['description']:
+    #         raise serializers.ValidationError("Title and description should be different")
+    #     else:
+    #         return data
     
-    def validate_name(self, value):
-        if len(value)<2:
-            raise serializers.ValidationError("Name is too short!")
-        else:
-            return value
+    # def validate_name(self, value):
+    #     if len(value)<2:
+    #         raise serializers.ValidationError("Name is too short!")
+    #     else:
+    #         return value
+
+
+
+#model serializer
+
+# class MovieSerializer(serializers.ModelSerializer):
+#     len_name = serializers.SerializerMethodField()
+    
+
+#     class Meta:
+#         model = Movie
+        
+#         #for individual representation
+#         # fields = ['id', 'name', 'description']
+#         # exclude = ['active'] #exclude active and shows other things
+#         # exclude = ['name'] #exclude name and shows other
+#         fields = "__all__" #its represent all the element
+        
+#     def get_len_name(self,object):
+#             length = len(object.name)
+#             return length
+        
+    
+#     def validate(self, data):
+#         if data['name']== data['description']:
+#             raise serializers.ValidationError("Title and description should be different")
+#         else:
+#             return data
+    
+#     def validate_name(self, value):
+#         if len(value)<2:
+#             raise serializers.ValidationError("Name is too short!")
+#         else:
+#             return value
     
     
     
