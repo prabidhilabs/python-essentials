@@ -1,18 +1,32 @@
 from rest_framework import serializers
 from watchlist.models import WatchList, StreamPlatform
 
-class StreamPlatformSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = StreamPlatform
-        fields = "__all__"
-
 
 class WatchListSerializer(serializers.ModelSerializer):
     
     class Meta:
        model = WatchList
        fields = "__all__" 
+       
+
+# class StreamPlatformSerializer(serializers.ModelSerializer):
+
+class StreamPlatformSerializer(serializers.HyperlinkedModelSerializer):
+    #after adding hyperlinked mode we add context in views file
+    watchlist = WatchListSerializer(many=True, read_only=True)
+    # watchlist = serializers.PrimaryKeyRelatedField(many=True, read_only = True)
+    #we can get primary key of watchlist through this line of code
+    
+    # watchlist = serializers.HyperlinkedRelatedField(
+    #     many = True,
+    #     read_only = True,
+    #     view_name = 'movie-detail'
+    #     )  #from urls
+    
+    
+    class Meta:
+        model = StreamPlatform
+        fields = "__all__"
 
         
         #for individual representation

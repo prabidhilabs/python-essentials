@@ -9,7 +9,8 @@ from .serializers import StreamPlatformSerializer, WatchListSerializer
 class StreamPlatformAV(APIView):
     def get(self, request):
         platform = StreamPlatform.objects.all()
-        serializer = StreamPlatformSerializer(platform, many = True)
+        serializer = StreamPlatformSerializer(platform, many = True,context={'request': request})
+        #context part is from hyperlinked mode serializer from serializer.py
         return Response(serializer.data)
     
     def post(self, request):
