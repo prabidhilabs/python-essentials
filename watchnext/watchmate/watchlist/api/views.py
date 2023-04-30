@@ -3,31 +3,55 @@ from rest_framework import generics
 from rest_framework.response import Response
 # from rest_framework.decorators import api_view
 from rest_framework.views import APIView
-from rest_framework import mixins
+# from rest_framework import mixins
 from watchlist.models import WatchList, StreamPlatform, Review
 
-from watchlist.api.serializers import (WatchListSerializer, StreamPlatformSerializer, 
-                                       ReviewSerializer)
+from watchlist.api.serializers import WatchListSerializer, StreamPlatformSerializer, ReviewSerializer
 from .serializers import StreamPlatformSerializer, WatchListSerializer
 
+class ReviewCreate(generics.CreateAPIView):
+   serializer_class = ReviewSerializer
+   
+   def perform_create(self, serializer):
+       pk = self.kwargs.get('pk')
+       movie = WatchList.objects.get(pk=pk)
+       
+       serializer.save(watchlist=movie)
+     
+
+#below's commented lines works by this class based views
+class ReviewList(generics.ListAPIView):
+    # queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        return Review.objects.filter(watchlist=pk)
+                         
+    
+class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    
+    
 
 #using the genericAPI
-class ReviewDetail(mixins.RetrieveModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
-    queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
+# class ReviewDetail(mixins.RetrieveModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+#     queryset = Review.objects.all()
+#     serializer_class = ReviewSerializer
     
-    def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
+#     def get(self, request, *args, **kwargs):
+#         return self.retrieve(request, *args, **kwargs)
 
-class ReviewList(mixins.ListModelMixin,mixins.CreateModelMixin,generics.GenericAPIView):
-    queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
+# class ReviewList(mixins.ListModelMixin,mixins.CreateModelMixin,generics.GenericAPIView):
+#     queryset = Review.objects.all()
+#     serializer_class = ReviewSerializer
     
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
+#     def get(self, request, *args, **kwargs):
+#         return self.list(request, *args, **kwargs)
     
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+#     def post(self, request, *args, **kwargs):
+#         return self.create(request, *args, **kwargs)
                       
 
 
