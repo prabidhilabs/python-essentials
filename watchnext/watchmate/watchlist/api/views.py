@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework import generics
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 # from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 # from rest_framework import mixins
@@ -14,11 +15,20 @@ from .serializers import StreamPlatformSerializer, WatchListSerializer
 class ReviewCreate(generics.CreateAPIView):
    serializer_class = ReviewSerializer
    
+   def get_queryset(self):
+       return Review.objects.all()
+   
    def perform_create(self, serializer):
        pk = self.kwargs.get('pk')
-       movie = WatchList.objects.get(pk=pk)
+       watchlist = WatchList.objects.get(pk=pk)
        
-       serializer.save(watchlist=movie)
+       review_user = self.request.user
+       review_queryset = Review.objects.filter(watchlist=watchlist, review_user=review_user)
+       
+       if review_queryset.exists():
+           raise ValidationError("You have already used this review watch")
+       
+       serializer.save(watchlist=watchlist, review_user=review_user)
      
 
 #below's commented lines works by this class based views
@@ -55,13 +65,13 @@ class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
 #     def post(self, request, *args, **kwargs):
 #         return self.create(request, *args, **kwargs)
           
-# class StreamPlatformLM(viewsets.ModelViewSet):
-#     queryset = StreamPlatform.objects.all()
-#     serializer_class = StreamPlatformSerializer
-
-class StreamPlatformLM(viewsets.ReadOnlyModelViewSet):
+class StreamPlatformLM(viewsets.ModelViewSet):
     queryset = StreamPlatform.objects.all()
     serializer_class = StreamPlatformSerializer
+
+# class StreamPlatformLM(viewsets.ReadOnlyModelViewSet):
+#     queryset = StreamPlatform.objects.all()
+#     serializer_class = StreamPlatformSerializer
            
 # class StreamPlatformLM(viewsets.ViewSet):
     

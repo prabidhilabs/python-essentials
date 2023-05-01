@@ -20,4 +20,7 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('watch/', include('watchlist.api.urls')),
+    
+    #for the login in login panel for the new user but not from the administration
+    path('api-auth/', include('rest_framework.urls')),
 ]
