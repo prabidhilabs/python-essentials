@@ -8,7 +8,9 @@ from rest_framework.views import APIView
 # from rest_framework import mixins
 from  rest_framework import viewsets
 from watchlist.models import WatchList, StreamPlatform, Review
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
+from watchlist.api.permissions import AdminOrReadOnly, ReviewUserOrReadOnly
 from watchlist.api.serializers import WatchListSerializer, StreamPlatformSerializer, ReviewSerializer
 from .serializers import StreamPlatformSerializer, WatchListSerializer
 
@@ -28,6 +30,14 @@ class ReviewCreate(generics.CreateAPIView):
        if review_queryset.exists():
            raise ValidationError("You have already used this review watch")
        
+       if watchlist.number_rating == 0:
+           watchlist.avg_rating = serializer.validated_data['rating']
+       else:
+           watchlist.avg_rating = (watchlist.avg_rating + serializer.validated_data['rating'])
+           
+           watchlist.number_rating = watchlist.number_rating + 1
+           watchlist.save()
+       
        serializer.save(watchlist=watchlist, review_user=review_user)
      
 
@@ -35,6 +45,7 @@ class ReviewCreate(generics.CreateAPIView):
 class ReviewList(generics.ListAPIView):
     # queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+    permission_classes = [AdminOrReadOnly]
     
     def get_queryset(self):
         pk = self.kwargs['pk']
@@ -44,6 +55,7 @@ class ReviewList(generics.ListAPIView):
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+    permission_classes = [ReviewUserOrReadOnly]
     
     
 
@@ -156,6 +168,7 @@ class WatchDetailAV(APIView):
         
         serializer = WatchListSerializer(movie)
         return Response(serializer.data)
+    
     def put(self, request, pk):
         movie = WatchList.objects.get(pk = pk)
         serializer = WatchListSerializer(data=request.data)
@@ -164,6 +177,7 @@ class WatchDetailAV(APIView):
             return Response(serializer.data)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
     def delete(self, request, pk):
         movie = WatchList.objects.get(pk = pk)
         movie.delete()
