@@ -16,6 +16,7 @@ from .serializers import StreamPlatformSerializer, WatchListSerializer
 
 class ReviewCreate(generics.CreateAPIView):
    serializer_class = ReviewSerializer
+   permission_classes = [IsAuthenticated]
    
    def get_queryset(self):
        return Review.objects.all()
@@ -30,13 +31,14 @@ class ReviewCreate(generics.CreateAPIView):
        if review_queryset.exists():
            raise ValidationError("You have already used this review watch")
        
+       
        if watchlist.number_rating == 0:
            watchlist.avg_rating = serializer.validated_data['rating']
        else:
-           watchlist.avg_rating = (watchlist.avg_rating + serializer.validated_data['rating'])
+           watchlist.avg_rating = (watchlist.avg_rating + serializer.validated_data['rating'])/2
            
-           watchlist.number_rating = watchlist.number_rating + 1
-           watchlist.save()
+       watchlist.number_rating = watchlist.number_rating + 1
+       watchlist.save()
        
        serializer.save(watchlist=watchlist, review_user=review_user)
      
@@ -171,7 +173,7 @@ class WatchDetailAV(APIView):
     
     def put(self, request, pk):
         movie = WatchList.objects.get(pk = pk)
-        serializer = WatchListSerializer(data=request.data)
+        serializer = WatchListSerializer(movie, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

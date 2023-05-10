@@ -36,7 +36,6 @@ class WatchList(models.Model):
 class Review(models.Model):
     
     review_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    
     rating = models.PositiveIntegerField(validators=[MinValueValidator(1),MaxValueValidator(5)])
     description = models.CharField(max_length=200, null=True)
     watchlist = models.ForeignKey(WatchList, on_delete=models.CASCADE, related_name="reviews")

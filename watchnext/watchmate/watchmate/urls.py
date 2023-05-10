@@ -20,7 +20,8 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('watch/', include('watchlist.api.urls')),
-    
     #for the login in login panel for the new user but not from the administration
+    #this is the temporary login urls so we remove this now
     path('api-auth/', include('rest_framework.urls')),
+    path('account/', include('user_app.api.urls')),
 ]
