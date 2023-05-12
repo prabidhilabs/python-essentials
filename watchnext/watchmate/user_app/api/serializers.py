@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 
 
-class RegistrationsSerializer(serializers.ModelSerializer):
+class RegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(
         style={'input_type': 'password'}, write_only=True)
 
@@ -27,7 +27,7 @@ class RegistrationsSerializer(serializers.ModelSerializer):
 
         account = User(
             email=self.validated_data['email'], username=self.validated_data['username'])
-        account.set_password()
+        account.set_password(self.validated_data['password'])
         account.save()
 
         return account
