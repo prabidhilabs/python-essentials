@@ -34,7 +34,11 @@ from watchlist.api.serializers import (
 
 from .serializers import StreamPlatformSerializer, WatchListSerializer
 
-from watchlist.api.pagination import WatchListPagination, WatchListLOPagination
+from watchlist.api.pagination import (
+    WatchListPagination,
+    WatchListLOPagination,
+    WatchListCPagination,
+)
 
 
 class UserReview(generics.ListAPIView):
@@ -240,10 +244,11 @@ class WatchListGV(generics.ListAPIView):
     queryset = WatchList.objects.all()
     serializer_class = WatchListSerializer
     pagination_class = WatchListPagination
-    pagination_class = WatchListLOPagination
+    # pagination_class = WatchListLOPagination  
+    pagination_class = WatchListCPagination
     # permission_classes = [IsAuthenticated]
-    filter_backends = [filters.OrderingFilter]
-    ordering_fields = ["avg_rating"]
+    # filter_backends = [filters.OrderingFilter]
+    # ordering_fields = ["avg_rating"]
 
 
 class WatchListAV(APIView):
