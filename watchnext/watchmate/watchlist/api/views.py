@@ -10,6 +10,7 @@ from rest_framework import filters
 # from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 
+
 # from rest_framework import mixins
 from rest_framework import viewsets
 from watchlist.models import WatchList, StreamPlatform, Review
@@ -244,7 +245,7 @@ class WatchListGV(generics.ListAPIView):
     queryset = WatchList.objects.all()
     serializer_class = WatchListSerializer
     pagination_class = WatchListPagination
-    # pagination_class = WatchListLOPagination  
+    # pagination_class = WatchListLOPagination
     pagination_class = WatchListCPagination
     # permission_classes = [IsAuthenticated]
     # filter_backends = [filters.OrderingFilter]
