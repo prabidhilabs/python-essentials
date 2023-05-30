@@ -2,6 +2,7 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+
 from ecommerce.settings import base
 
 
@@ -9,7 +10,7 @@ def main():
     """Run administrative tasks."""
 
     if base.DEBUG:
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ecommerce.settings.local")
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ecommerce.settings.base")
     else:
         os.environ.setdefault(
             "DJANGO_SETTINGS_MODULE", "ecommerce.settings.productions"
